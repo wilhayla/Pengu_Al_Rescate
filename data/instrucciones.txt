@@ -1,0 +1,2 @@
+Carpeta donde se guardaran los records realizados
+Crear un archivo simple, puede ser un .txt o un JSON
