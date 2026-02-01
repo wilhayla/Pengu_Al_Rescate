@@ -1,8 +1,19 @@
 # Punto de entrada donde corre el juego
-
 import arcade
+import sys
+import os
+
+# 1. Obtenemos la ruta absoluta de la carpeta 'src'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# 2. La añadimos al buscador de Python
+if BASE_DIR not in sys.path:
+    sys.path.append(BASE_DIR)
+
+
 # Importamos nuestras constantes
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE
+from views.menu_view import MenuView
 
 class PenguGame(arcade.Window):
     """
@@ -63,8 +74,16 @@ class PenguGame(arcade.Window):
 
 def main():
     """ Función de entrada al programa """
-    window = PenguGame()
-    window.setup()
+    # 1. Creamos la ventana básica (sin lógica interna)
+    window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    
+    # 2. Creamos la instancia del Menú
+    menu = MenuView()
+    
+    # 3. Le decimos a la ventana: "Muestra el menú"
+    window.show_view(menu)
+    
+    # 4. Arrancamos el motor
     arcade.run()
 
 if __name__ == "__main__":
