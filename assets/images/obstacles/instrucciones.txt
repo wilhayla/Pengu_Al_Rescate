@@ -1,0 +1,1 @@
+carpeta para guardar imagnes de obstaculos, basura, etc
