@@ -63,15 +63,23 @@ class GameView(arcade.View):
         """ Aquí se mueve todo (gravedad, enemigos, etc.) """
         """ Lógica de movimiento y colisiones """
         # 3. Esto hace que TODOS los enemigos en la lista ejecuten su método update()
-        self.lista_enemigos.update()
+        # 1. Actualizar enemigos
+        if self.lista_enemigos:
+            self.lista_enemigos.update()
 
         # 2. Revisar si ALGÚN enemigo de la lista tocó al pingüino
-        enemigos_que_me_tocaron = arcade.check_for_collision_with_list(self.player, self.lista_enemigos)
+        if self.player and self.lista_enemigos:
+            enemigos_que_me_tocaron = arcade.check_for_collision_with_list(self.player, self.lista_enemigos)
 
-        # 3. Si la lista no está vacía, hubo contacto
-        if len(enemigos_que_me_tocaron) > 0:
-            print("¡Ouch! Un enemigo te alcanzó.")
-            self.perder_vida() # Función que podrías crear para manejar la muerte
+            # 3. Si la lista no está vacía, hubo contacto
+            if len(enemigos_que_me_tocaron) > 0:
+                print("¡Ouch! Un enemigo te alcanzó.")
+                # self.perder_vida() # Función que podrías crear para manejar la muerte
+                
+    def perder_vida(self):
+        """ Lógica para cuando el pingüino es alcanzado """
+        print("Reiniciando nivel...")
+        self.setup()
 
     def on_key_press(self, key, modifiers):
         """ Control del pingüino """
