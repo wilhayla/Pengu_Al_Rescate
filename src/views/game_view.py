@@ -6,8 +6,11 @@ class GameView(arcade.View):
     def __init__(self):
         super().__init__()
         # Aquí es donde mañana guardaremos al pingüino
+        super().__init__()
         self.player = None 
+        self.player_list = None # <--- Nueva lista para el jugador
         self.lista_enemigos = None
+        self.camera = None
 
         # 1. Declaramos la cámara
         self.camera = None
@@ -17,12 +20,18 @@ class GameView(arcade.View):
         # 2. Inicializamos la cámara (Camera2D es la versión moderna en Arcade)
         self.camera = arcade.camera.Camera2D()
 
-        # Creamos la lista de sprites
-        self.lista_enemigos = arcade.SpriteList()
-
         # IMPORTANTE: Mañana el encargado del jugador debe darte la clase
         # Por ahora, creamos un sprite temporal para que el enemigo no falle
+        # Creamos la lista y añadimos al jugador dentro
+        self.player_list = arcade.SpriteList()
         self.player = arcade.Sprite(":resources:images/animated_characters/robot/robot_idle.png", 0.5)
+        self.player = arcade.Sprite(":resources:images/animated_characters/robot/robot_idle.png", 0.5)
+        self.player.center_x = SCREEN_WIDTH / 2
+        self.player.center_y = SCREEN_HEIGHT / 2
+        self.player_list.append(self.player) # <--- Lo metemos en la lista
+
+        # Creamos la lista de sprites
+        self.lista_enemigos = arcade.SpriteList()
         self.player.center_x = SCREEN_WIDTH / 2
         self.player.center_y = SCREEN_HEIGHT / 2
 
