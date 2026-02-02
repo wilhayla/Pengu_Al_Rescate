@@ -26,3 +26,14 @@ SPEED_INCREMENT = 0.5         # Cuánto aumenta la velocidad al subir de nivel
 WORLD_ARCTIC = "Arctic"
 WORLD_CITY = "City"
 WORLD_OCEAN = "Ocean"
+
+# Escala general para los personajes (Robot/Pingüino)
+CHARACTER_SCALING = 0.5  # Esto reduce la imagen original a la mitad
+
+# Escala para los obstáculos (Rocas/Enemigos)
+# A veces quieres que las rocas sean un poco más pequeñas que el héroe
+OBSTACLE_SCALING = 0.4   
+
+# Escala para el mapa o suelo
+TILE_SCALING = 0.5
+
