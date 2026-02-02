@@ -1,4 +1,5 @@
 import arcade
+import random
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 from models.enemy import EnemigoSeguidor  #importar la clase EnemigoSeguidor
 from models.obstacle import Obstacle
@@ -7,12 +8,10 @@ class GameView(arcade.View):
     def __init__(self):
         super().__init__()
         # Aquí es donde mañana guardaremos al pingüino
-        super().__init__()
         self.player = None 
         self.player_list = None # <--- Nueva lista para el jugador
         self.lista_enemigos = None
-        self.camera = None
-
+        
         # 1. Declaramos la cámara
         self.camera = None
 
@@ -30,21 +29,22 @@ class GameView(arcade.View):
         # Creamos la lista y añadimos al jugador dentro
         self.player_list = arcade.SpriteList()
         self.player = arcade.Sprite(":resources:images/animated_characters/robot/robot_idle.png", 0.5)
-        self.player = arcade.Sprite(":resources:images/animated_characters/robot/robot_idle.png", 0.5)
         self.player.center_x = SCREEN_WIDTH / 2
         self.player.center_y = SCREEN_HEIGHT / 2
         self.player_list.append(self.player) # <--- Lo metemos en la lista
 
         # Creamos la lista de sprites
         self.lista_enemigos = arcade.SpriteList()
-        self.player.center_x = SCREEN_WIDTH / 2
-        self.player.center_y = SCREEN_HEIGHT / 2
 
         # 2. Creamos al enemigo y lo añadimos a su lista
 
         # Le pasamos self.player para que sepa a quién seguir
         malo = EnemigoSeguidor(600, 300, self.player, velocidad=2)
         self.lista_enemigos.append(malo)
+
+        # --- NUEVO: Inicializar lista de obstáculos ---
+        self.lista_obstaculos = arcade.SpriteList()
+        self.tiempo_proximo_obstaculo = 2.0  # El primer obstáculo sale a los 2 segundos
 
     def on_show_view(self):
         """ Se ejecuta al empezar el juego """
@@ -65,6 +65,9 @@ class GameView(arcade.View):
         
         if self.lista_enemigos:
             self.lista_enemigos.draw() # <--- ¡Faltaba esto para ver a los malos!
+
+        if self.lista_obstaculos:
+            self.lista_obstaculos.draw()
         
         arcade.draw_text(
             "ZONA DE JUEGO", 
@@ -91,6 +94,24 @@ class GameView(arcade.View):
             if len(enemigos_que_me_tocaron) > 0:
                 print("¡Ouch! Un enemigo te alcanzó.")
                 self.perder_vida() # Función que podrías crear para manejar la muerte
+
+        # --- NUEVO: Lógica de generación de obstáculos ---
+        self.tiempo_proximo_obstaculo -= delta_time
+        if self.tiempo_proximo_obstaculo <= 0:
+            # Creamos la roca con una velocidad de 5
+            nueva_roca = Obstacle(speed=5)
+            self.lista_obstaculos.append(nueva_roca)
+            
+            # Reiniciamos el tiempo (sale uno nuevo cada 1.5 a 3 segundos)
+            self.tiempo_proximo_obstaculo = random.uniform(1.5, 3.0)
+
+        # Actualizar movimiento de las rocas
+        self.lista_obstaculos.update()
+
+        # --- NUEVO: Lógica de Colisión (Opcional por ahora) ---
+        if arcade.check_for_collision_with_list(self.player, self.lista_obstaculos):
+            print("¡AUCH! El robot chocó con una piedra.")
+            # Aquí podrías restar vidas o ir a Game Over
                 
     def perder_vida(self):
         """ Lógica para cuando el pingüino es alcanzado """
