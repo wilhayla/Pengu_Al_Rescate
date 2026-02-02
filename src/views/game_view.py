@@ -51,7 +51,6 @@ class GameView(arcade.View):
         
         self.lista_enemigos.draw() # <--- ¡Faltaba esto para ver a los malos!
         
-        self.clear()
         arcade.draw_text(
             "ZONA DE JUEGO", 
             SCREEN_WIDTH / 2, 
