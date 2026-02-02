@@ -55,10 +55,11 @@ class GameView(arcade.View):
         self.camera.use()
 
         # Dibujamos los elementos del juego
-        if self.player:
-            self.player.draw()
+        if self.player_list:
+            self.player_list.draw()
         
-        self.lista_enemigos.draw() # <--- ¡Faltaba esto para ver a los malos!
+        if self.lista_enemigos:
+            self.lista_enemigos.draw() # <--- ¡Faltaba esto para ver a los malos!
         
         arcade.draw_text(
             "ZONA DE JUEGO", 
