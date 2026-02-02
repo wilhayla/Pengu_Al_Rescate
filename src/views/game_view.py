@@ -29,6 +29,7 @@ class GameView(arcade.View):
     def on_show_view(self):
         """ Se ejecuta al empezar el juego """
         arcade.set_background_color(arcade.color.SKY_BLUE)
+        self.setup() # <--- ¡Indispensable llamar al setup aquí!
 
     def on_draw(self):
         """ Aquí se dibuja el juego 60 veces por segundo """
