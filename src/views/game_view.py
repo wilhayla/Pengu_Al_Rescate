@@ -34,6 +34,12 @@ class GameView(arcade.View):
     def on_draw(self):
         """ Aquí se dibuja el juego 60 veces por segundo """
         self.clear()
+
+        # Dibujamos los elementos del juego
+        if self.player:
+            self.player.draw()
+        
+        self.lista_enemigos.draw() # <--- ¡Faltaba esto para ver a los malos!
         
         self.clear()
         arcade.draw_text(
