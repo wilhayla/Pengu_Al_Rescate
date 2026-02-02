@@ -6,7 +6,7 @@ class GameView(arcade.View):
     def __init__(self):
         super().__init__()
         # Aquí es donde mañana guardaremos al pingüino
-        self.player_sprite = None 
+        self.player = None 
         self.lista_enemigos = None
 
     def setup(self):
@@ -14,13 +14,16 @@ class GameView(arcade.View):
         # Creamos la lista de sprites
         self.lista_enemigos = arcade.SpriteList()
 
-        # Supongamos que ya creaste a tu pingüino
-        # self.player = Player(...) 
+        # IMPORTANTE: Mañana el encargado del jugador debe darte la clase
+        # Por ahora, creamos un sprite temporal para que el enemigo no falle
+        self.player = arcade.Sprite(":resources:images/animated_characters/robot/robot_idle.png", 0.5)
+        self.player.center_x = SCREEN_WIDTH / 2
+        self.player.center_y = SCREEN_HEIGHT / 2
 
         # 2. Creamos al enemigo y lo añadimos a su lista
 
         # Le pasamos self.player para que sepa a quién seguir
-        malo = EnemigoSeguidor(600, 300, self.player_sprite, velocidad=2)
+        malo = EnemigoSeguidor(600, 300, self.player, velocidad=2)
         self.lista_enemigos.append(malo)
 
     def on_show_view(self):
@@ -54,6 +57,14 @@ class GameView(arcade.View):
         """ Lógica de movimiento y colisiones """
         # 3. Esto hace que TODOS los enemigos en la lista ejecuten su método update()
         self.lista_enemigos.update()
+
+        # 2. Revisar si ALGÚN enemigo de la lista tocó al pingüino
+        enemigos_que_me_tocaron = arcade.check_for_collision_with_list(self.player, self.lista_enemigos)
+
+        # 3. Si la lista no está vacía, hubo contacto
+        if len(enemigos_que_me_tocaron) > 0:
+            print("¡Ouch! Un enemigo te alcanzó.")
+            self.perder_vida() # Función que podrías crear para manejar la muerte
 
     def on_key_press(self, key, modifiers):
         """ Control del pingüino """
