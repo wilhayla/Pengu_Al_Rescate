@@ -9,7 +9,7 @@ class EnemigoSeguidor(arcade.Sprite):
         self.objetivo = sprite_objetivo
         self.velocidad = velocidad
 
-    def update(self):
+    def update(self, delta_time: float = 1 / 60):
         # Calcular distancia
         distancia_x = self.objetivo.center_x - self.center_x
         distancia_y = self.objetivo.center_y - self.center_y
