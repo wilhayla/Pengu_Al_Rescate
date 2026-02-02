@@ -51,7 +51,9 @@ class GameView(arcade.View):
 
     def on_update(self, delta_time):
         """ Aquí se mueve todo (gravedad, enemigos, etc.) """
-        pass
+        """ Lógica de movimiento y colisiones """
+        # 3. Esto hace que TODOS los enemigos en la lista ejecuten su método update()
+        self.lista_enemigos.update()
 
     def on_key_press(self, key, modifiers):
         """ Control del pingüino """
