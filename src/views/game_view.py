@@ -1,6 +1,7 @@
 import arcade
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 from models.enemy import EnemigoSeguidor  #importar la clase EnemigoSeguidor
+from models.obstacle import Obstacle
 
 class GameView(arcade.View):
     def __init__(self):
@@ -14,6 +15,10 @@ class GameView(arcade.View):
 
         # 1. Declaramos la cámara
         self.camera = None
+
+        # --- NUEVO: Lista de obstáculos y temporizador ---
+        self.lista_obstaculos = None
+        self.tiempo_proximo_obstaculo = 0.0
 
     def setup(self):
         """ Configuración inicial del nivel (se llama al empezar o reiniciar) """
