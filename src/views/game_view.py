@@ -1,11 +1,27 @@
 import arcade
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT
+from models.enemy import EnemigoSeguidor  #importar la clase EnemigoSeguidor
 
 class GameView(arcade.View):
     def __init__(self):
         super().__init__()
         # Aquí es donde mañana guardaremos al pingüino
         self.player_sprite = None 
+        self.lista_enemigos = None
+
+    def setup(self):
+        """ Configuración inicial del nivel (se llama al empezar o reiniciar) """
+        # Creamos la lista de sprites
+        self.lista_enemigos = arcade.SpriteList()
+
+        # Supongamos que ya creaste a tu pingüino
+        # self.player = Player(...) 
+
+        # 2. Creamos al enemigo y lo añadimos a su lista
+
+        # Le pasamos self.player para que sepa a quién seguir
+        malo = EnemigoSeguidor(600, 300, self.player_sprite, velocidad=2)
+        self.lista_enemigos.append(malo)
 
     def on_show_view(self):
         """ Se ejecuta al empezar el juego """
