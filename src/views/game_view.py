@@ -9,8 +9,14 @@ class GameView(arcade.View):
         self.player = None 
         self.lista_enemigos = None
 
+        # 1. Declaramos la cámara
+        self.camera = None
+
     def setup(self):
         """ Configuración inicial del nivel (se llama al empezar o reiniciar) """
+        # 2. Inicializamos la cámara (Camera2D es la versión moderna en Arcade)
+        self.camera = arcade.camera.Camera2D()
+
         # Creamos la lista de sprites
         self.lista_enemigos = arcade.SpriteList()
 
@@ -35,6 +41,10 @@ class GameView(arcade.View):
         """ Aquí se dibuja el juego 60 veces por segundo """
         self.clear()
 
+        # 3. ACTIVAR LA CÁMARA
+        # Todo lo que se dibuje después de esta línea seguirá a la cámara
+        self.camera.use()
+
         # Dibujamos los elementos del juego
         if self.player:
             self.player.draw()
@@ -50,7 +60,7 @@ class GameView(arcade.View):
             font_size=30, 
             anchor_x="center"
         )
-        
+
     def on_update(self, delta_time):
         """ Aquí se mueve todo (gravedad, enemigos, etc.) """
         """ Lógica de movimiento y colisiones """
@@ -66,7 +76,7 @@ class GameView(arcade.View):
             # 3. Si la lista no está vacía, hubo contacto
             if len(enemigos_que_me_tocaron) > 0:
                 print("¡Ouch! Un enemigo te alcanzó.")
-                # self.perder_vida() # Función que podrías crear para manejar la muerte
+                self.perder_vida() # Función que podrías crear para manejar la muerte
                 
     def perder_vida(self):
         """ Lógica para cuando el pingüino es alcanzado """
