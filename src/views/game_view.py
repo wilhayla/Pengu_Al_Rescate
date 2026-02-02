@@ -50,15 +50,7 @@ class GameView(arcade.View):
             font_size=30, 
             anchor_x="center"
         )
-        '''arcade.draw_text(
-            "Mañana aquí pondremos al pingüino", 
-            SCREEN_WIDTH / 2, 
-            SCREEN_HEIGHT / 2 - 50,
-            arcade.color.DARK_BLUE, 
-            font_size=15, 
-            anchor_x="center"
-        )'''
-
+        
     def on_update(self, delta_time):
         """ Aquí se mueve todo (gravedad, enemigos, etc.) """
         """ Lógica de movimiento y colisiones """
