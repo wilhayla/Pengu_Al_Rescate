@@ -42,7 +42,7 @@ class GameView(arcade.View):
 
         # --- NUEVO: Inicializar lista de obstáculos ---
         self.lista_obstaculos = arcade.SpriteList()
-        self.tiempo_proximo_obstaculo = 2.0  # El primer obstáculo sale a los 2 segundos
+        self.tiempo_proximo_obstaculo = 0.5  # El primer obstáculo sale a los 2 segundos
 
         # 2. Inicializamos la cámara (Camera2D es la versión moderna en Arcade)
         self.camera = arcade.camera.Camera2D()
@@ -62,6 +62,7 @@ class GameView(arcade.View):
         self.camera.use()
 
         # Dibujamos los elementos del juego
+        '''
         if self.player_list:
             self.player_list.draw()
         
@@ -69,14 +70,17 @@ class GameView(arcade.View):
             self.lista_enemigos.draw() # <--- ¡Faltaba esto para ver a los malos!
 
         if self.lista_obstaculos:
-            self.lista_obstaculos.draw()
+            self.lista_obstaculos.draw()'''
+        self.lista_obstaculos.draw() 
+        self.lista_enemigos.draw()
+        self.player_list.draw()
         
         arcade.draw_text(
             "ZONA DE JUEGO", 
-            SCREEN_WIDTH / 2, 
-            SCREEN_HEIGHT / 2,
+            self.player.center_x, # <-- CAMBIO: Dibujamos el texto sobre el robot para debug
+            self.player.center_y + 100,
             arcade.color.BLACK, 
-            font_size=30, 
+            font_size=20, 
             anchor_x="center"
         )
 
@@ -99,15 +103,26 @@ class GameView(arcade.View):
         
         # 3. Lógica de generación de obstáculos
         self.tiempo_proximo_obstaculo -= delta_time
+        # Este print te dirá cuánto tiempo falta en cada segundo
+        # (Solo imprimimos cuando sea entero para no inundar la consola)
+        if int(self.tiempo_proximo_obstaculo * 10) % 10 == 0:
+            print(f"Reloj piedras: {self.tiempo_proximo_obstaculo:.1f}")
+
         if self.tiempo_proximo_obstaculo <= 0:
+            print("¡EL RELOJ LLEGÓ A CERO! Creando piedra...")
             # Creamos la roca con una velocidad de 5
             nueva_roca = Obstacle(speed=5)
+
+            nueva_roca.center_x = self.player.center_x + 400
+            nueva_roca.center_y = self.player.center_y
             # RECUERDA: Si el robot se mueve, ajusta la X aquí:
             # nueva_roca.center_x = self.player.center_x + 500
             self.lista_obstaculos.append(nueva_roca)
+            print(f"¡PIEDRA CREADA! Total en lista: {len(self.lista_obstaculos)}")
             
             # Reiniciamos el tiempo (sale uno nuevo cada 1.5 a 3 segundos)
-            self.tiempo_proximo_obstaculo = random.uniform(1.5, 3.0)
+            # self.tiempo_proximo_obstaculo = random.uniform(1.5, 3.0)
+            self.tiempo_proximo_obstaculo = 1.0
 
         # 4. Actualizar movimiento de las rocas
         self.lista_obstaculos.update()
@@ -121,6 +136,8 @@ class GameView(arcade.View):
         # 6. ACTUALIZAR CÁMARA (Forma correcta para tu versión)
         # Esto mantiene al robot en el centro siempre
         self.camera.center = self.player.position
+
+        
                 
     def perder_vida(self):
         """ Lógica para cuando el pingüino es alcanzado """
