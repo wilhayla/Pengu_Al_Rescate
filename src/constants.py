@@ -37,3 +37,5 @@ OBSTACLE_SCALING = 0.4
 # Escala para el mapa o suelo
 TILE_SCALING = 0.5
 
+PLAYER_MOVEMENT_SPEED = 5
+
