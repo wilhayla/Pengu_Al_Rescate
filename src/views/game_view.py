@@ -94,7 +94,7 @@ class GameView(arcade.View):
             if len(enemigos_que_me_tocaron) > 0:
                 print("¡Ouch! Un enemigo te alcanzó.")
                 self.perder_vida() # Función que podrías crear para manejar la muerte
-
+        
         # --- NUEVO: Lógica de generación de obstáculos ---
         self.tiempo_proximo_obstaculo -= delta_time
         if self.tiempo_proximo_obstaculo <= 0:
@@ -112,6 +112,11 @@ class GameView(arcade.View):
         if arcade.check_for_collision_with_list(self.player, self.lista_obstaculos):
             print("¡AUCH! El robot chocó con una piedra.")
             # Aquí podrías restar vidas o ir a Game Over
+        # Al final de on_update
+        self.camera.position = (
+        self.player.center_x - SCREEN_WIDTH / 2,
+        self.player.center_y - SCREEN_HEIGHT / 2
+        )
                 
     def perder_vida(self):
         """ Lógica para cuando el pingüino es alcanzado """
