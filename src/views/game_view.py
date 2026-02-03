@@ -1,6 +1,6 @@
 import arcade
 import random
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT, PLAYER_MOVEMENT_SPEED
 from models.enemy import EnemigoSeguidor  #importar la clase EnemigoSeguidor
 from models.obstacle import Obstacle
 from models.player import Player
@@ -96,6 +96,13 @@ class GameView(arcade.View):
     def on_update(self, delta_time):
         """ Aquí se mueve todo (gravedad, enemigos, etc.) """
         """ Lógica de movimiento y colisiones """
+
+        # 1. Actualizar físicas (esto mueve al pingüino y aplica gravedad)
+        self.physics_engine.update()
+
+        # 2. Actualizar la animación del pingüino
+        self.player.update_animation(delta_time)
+        
         # 3. Esto hace que TODOS los enemigos en la lista ejecuten su método update()
         # 1. Actualizar enemigos
         if self.lista_enemigos:
@@ -154,8 +161,22 @@ class GameView(arcade.View):
         self.setup()
 
     def on_key_press(self, key, modifiers):
-        """ Control del pingüino """
-        if key == arcade.key.ESCAPE:
-            # Si se cansan, vuelven al menú
+        """ Control del pingüino y navegación """
+        
+        # 1. SALTO: Usamos la lógica de tu clase Player
+        # Solo saltamos si el motor de físicas confirma que tocamos suelo
+        if key == arcade.key.SPACE or key == arcade.key.UP:
+            if self.physics_engine.can_jump():
+                self.player.jump()
+
+        # 2. MOVIMIENTO LATERAL: (Opcional, según tu diseño)
+        elif key == arcade.key.LEFT or key == arcade.key.A:
+            self.player.change_x = -PLAYER_MOVEMENT_SPEED
+        elif key == arcade.key.RIGHT or key == arcade.key.D:
+            self.player.change_x = PLAYER_MOVEMENT_SPEED
+
+        # 3. NAVEGACIÓN: Salir al menú
+        elif key == arcade.key.ESCAPE:
             from views.menu_view import MenuView
-            self.window.show_view(MenuView())
+            menu_view = MenuView()
+            self.window.show_view(menu_view)
