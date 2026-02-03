@@ -3,6 +3,7 @@ import random
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 from models.enemy import EnemigoSeguidor  #importar la clase EnemigoSeguidor
 from models.obstacle import Obstacle
+from models.player import Player
 
 class GameView(arcade.View):
     def __init__(self):
@@ -27,10 +28,18 @@ class GameView(arcade.View):
         # Por ahora, creamos un sprite temporal para que el enemigo no falle
         # Creamos la lista y añadimos al jugador dentro
         self.player_list = arcade.SpriteList()
-        self.player = arcade.Sprite(":resources:images/animated_characters/robot/robot_idle.png", 0.5)
+        self.player = Player()
         self.player.center_x = SCREEN_WIDTH / 2
         self.player.center_y = SCREEN_HEIGHT / 2
         self.player_list.append(self.player) # <--- Lo metemos en la lista
+
+        # IMPORTANTE: Para que el pingüino no atraviese el suelo, 
+        # necesitamos el motor de físicas en la vista principal
+        self.physics_engine = arcade.PhysicsEnginePlatformer(
+            self.player, 
+            self.wall_list, # Asegúrate de tener una lista de suelos/muros
+            gravity_constant=0.5
+        )
 
         # Creamos la lista de sprites
         self.lista_enemigos = arcade.SpriteList()
