@@ -88,7 +88,7 @@ class GameView(arcade.View):
         if self.lista_enemigos:
             self.lista_enemigos.update()
 
-        # 2. Revisar si ALGÚN enemigo de la lista tocó al pingüino
+        # 2. # 2. Colisión con enemigos
         if self.player and self.lista_enemigos:
             enemigos_que_me_tocaron = arcade.check_for_collision_with_list(self.player, self.lista_enemigos)
 
@@ -97,26 +97,29 @@ class GameView(arcade.View):
                 print("¡Ouch! Un enemigo te alcanzó.")
                 self.perder_vida() # Función que podrías crear para manejar la muerte
         
-        # --- NUEVO: Lógica de generación de obstáculos ---
+        # 3. Lógica de generación de obstáculos
         self.tiempo_proximo_obstaculo -= delta_time
         if self.tiempo_proximo_obstaculo <= 0:
             # Creamos la roca con una velocidad de 5
             nueva_roca = Obstacle(speed=5)
+            # RECUERDA: Si el robot se mueve, ajusta la X aquí:
+            # nueva_roca.center_x = self.player.center_x + 500
             self.lista_obstaculos.append(nueva_roca)
             
             # Reiniciamos el tiempo (sale uno nuevo cada 1.5 a 3 segundos)
             self.tiempo_proximo_obstaculo = random.uniform(1.5, 3.0)
 
-        # Actualizar movimiento de las rocas
+        # 4. Actualizar movimiento de las rocas
         self.lista_obstaculos.update()
 
-        # --- NUEVO: Lógica de Colisión (Opcional por ahora) ---
+        # 5. Colisión con obstáculos
         if arcade.check_for_collision_with_list(self.player, self.lista_obstaculos):
             print("¡AUCH! El robot chocó con una piedra.")
             # Aquí podrías restar vidas o ir a Game Over
             self.perder_vida()
 
-        # Al final de on_update
+        # 6. ACTUALIZAR CÁMARA (Forma correcta para tu versión)
+        # Esto mantiene al robot en el centro siempre
         self.camera.center = self.player.position
                 
     def perder_vida(self):
