@@ -23,7 +23,6 @@ class GameView(arcade.View):
     def setup(self):
         """ Configuración inicial del nivel (se llama al empezar o reiniciar) """
         
-
         # IMPORTANTE: Mañana el encargado del jugador debe darte la clase
         # Por ahora, creamos un sprite temporal para que el enemigo no falle
         # Creamos la lista y añadimos al jugador dentro
@@ -76,6 +75,10 @@ class GameView(arcade.View):
         # 3. ACTIVAR LA CÁMARA
         # Todo lo que se dibuje después de esta línea seguirá a la cámara
         self.camera.use()
+
+        # 2. DIBUJAR EL SUELO (Debe ir primero para que esté al fondo)
+        if self.wall_list:
+            self.wall_list.draw()
 
         # Dibujamos los elementos del juego
         '''
@@ -137,7 +140,7 @@ class GameView(arcade.View):
             nueva_roca = Obstacle(speed=5)
 
             nueva_roca.center_x = self.player.center_x + 400
-            nueva_roca.center_y = self.player.center_y
+            nueva_roca.center_y = 64
             # RECUERDA: Si el robot se mueve, ajusta la X aquí:
             # nueva_roca.center_x = self.player.center_x + 500
             self.lista_obstaculos.append(nueva_roca)
@@ -160,12 +163,17 @@ class GameView(arcade.View):
         # Esto mantiene al robot en el centro siempre
         self.camera.center = self.player.position
 
-        
-                
+        for roca in self.lista_obstaculos:
+            if roca.right < self.player.left - 200: # Si la roca ya pasó al pingüino por mucho
+                roca.remove_from_sprite_lists()
+       
     def perder_vida(self):
-        """ Lógica para cuando el pingüino es alcanzado """
-        print("Reiniciando nivel...")
-        self.setup()
+        """ Esta función se ejecuta cuando chocas """
+        print("¡El pingüino ha sido golpeado!")
+        self.player.die()  # Esto usa el método die() que creamos en player.py
+        
+        # Opcional: Si quieres que el enemigo también vuelva a su sitio
+        self.setup() # Esto reiniciaría todo el nivel
 
     def on_key_press(self, key, modifiers):
         """ Control del pingüino y navegación """
