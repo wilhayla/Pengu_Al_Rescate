@@ -10,7 +10,7 @@ class Player(arcade.Sprite):
 # Inicialización del sprite: Llamamos al constructor de arcade.Sprite indicando una imagen inicial y la escala. 
 # (Si quieres usar otra imagen, aqui podemos cambiarlo). Posicionamos al personaje y cargamos texturas usadas.
 # Pasamos una textura por defecto y la escala al constructor padre
-        super().__init__(":resources:images/animated_characters/male_person/malePerson_idle.png", CHARACTER_SCALING)
+        super().__init__(":resources:images/animated_characters/penguin/penguin_idle.png", CHARACTER_SCALING)
 
         # Establecer posición inicial (centro del sprite)
         self.center_x = PLAYER_START_X
@@ -18,9 +18,9 @@ class Player(arcade.Sprite):
 
         # Cargar texturas UNA SOLA VEZ en el constructor:
         # - arcade.load_texture carga la imagen y devuelve un objeto Texture.
-        self.texture_idle = arcade.load_texture(":resources:images/animated_characters/male_person/malePerson_idle.png")
-        self.texture_jump = arcade.load_texture(":resources:images/animated_characters/male_person/malePerson_jump.png")
-        self.texture_fall = arcade.load_texture(":resources:images/animated_characters/male_person/malePerson_fall.png")
+        self.texture_idle = arcade.load_texture(":resources:images/animated_characters/penguin/penguin_idle.png")
+        self.texture_jump = arcade.load_texture(":resources:images/animated_characters/penguin/penguin_jump.png")
+        self.texture_fall = arcade.load_texture(":resources:images/animated_characters/penguin/penguin_walk01.png")
 
         # La propiedad self.texture es la que se dibuja; inicializamos con idle
         self.texture = self.texture_idle
