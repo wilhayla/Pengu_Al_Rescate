@@ -35,4 +35,9 @@ CHARACTER_SCALING = 0.5  # Esto reduce la imagen original a la mitad
 OBSTACLE_SCALING = 0.4   
 
 # Escala para el mapa o suelo
+<<<<<<< .merge_file_AuzMLR
 TILE_SCALING = 0.5
+=======
+TILE_SCALING = 0.5
+
+>>>>>>> .merge_file_N0ksII
