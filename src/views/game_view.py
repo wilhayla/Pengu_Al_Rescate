@@ -28,10 +28,17 @@ class GameView(arcade.View):
         # Por ahora, creamos un sprite temporal para que el enemigo no falle
         # Creamos la lista y añadimos al jugador dentro
         self.player_list = arcade.SpriteList()
+        self.wall_list = arcade.SpriteList()
         self.player = Player()
         self.player.center_x = SCREEN_WIDTH / 2
         self.player.center_y = SCREEN_HEIGHT / 2
         self.player_list.append(self.player) # <--- Lo metemos en la lista
+
+        for x in range(0, SCREEN_WIDTH * 2, 64): # Suelo largo para poder caminar
+            suelo = arcade.Sprite(":resources:images/tiles/grassMid.png", 0.5)
+            suelo.center_x = x
+            suelo.center_y = 32
+            self.wall_list.append(suelo)
 
         # IMPORTANTE: Para que el pingüino no atraviese el suelo, 
         # necesitamos el motor de físicas en la vista principal
