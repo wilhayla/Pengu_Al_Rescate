@@ -21,8 +21,7 @@ class GameView(arcade.View):
 
     def setup(self):
         """ Configuración inicial del nivel (se llama al empezar o reiniciar) """
-        # 2. Inicializamos la cámara (Camera2D es la versión moderna en Arcade)
-        self.camera = arcade.camera.Camera2D()
+        
 
         # IMPORTANTE: Mañana el encargado del jugador debe darte la clase
         # Por ahora, creamos un sprite temporal para que el enemigo no falle
@@ -37,7 +36,6 @@ class GameView(arcade.View):
         self.lista_enemigos = arcade.SpriteList()
 
         # 2. Creamos al enemigo y lo añadimos a su lista
-
         # Le pasamos self.player para que sepa a quién seguir
         malo = EnemigoSeguidor(600, 300, self.player, velocidad=2)
         self.lista_enemigos.append(malo)
@@ -45,6 +43,10 @@ class GameView(arcade.View):
         # --- NUEVO: Inicializar lista de obstáculos ---
         self.lista_obstaculos = arcade.SpriteList()
         self.tiempo_proximo_obstaculo = 2.0  # El primer obstáculo sale a los 2 segundos
+
+        # 2. Inicializamos la cámara (Camera2D es la versión moderna en Arcade)
+        self.camera = arcade.camera.Camera2D()
+        self.camera.center = self.player.position
 
     def on_show_view(self):
         """ Se ejecuta al empezar el juego """
@@ -112,11 +114,10 @@ class GameView(arcade.View):
         if arcade.check_for_collision_with_list(self.player, self.lista_obstaculos):
             print("¡AUCH! El robot chocó con una piedra.")
             # Aquí podrías restar vidas o ir a Game Over
+            self.perder_vida()
+
         # Al final de on_update
-        self.camera.position = (
-        self.player.center_x - SCREEN_WIDTH / 2,
-        self.player.center_y - SCREEN_HEIGHT / 2
-        )
+        self.camera.center = self.player.position
                 
     def perder_vida(self):
         """ Lógica para cuando el pingüino es alcanzado """
