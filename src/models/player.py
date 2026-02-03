@@ -49,6 +49,3 @@ class Player(arcade.Sprite):
         self.center_y = PLAYER_START_Y
         self.change_x = 0
         self.change_y = 0
-
-
-    
