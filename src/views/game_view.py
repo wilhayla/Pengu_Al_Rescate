@@ -1,6 +1,6 @@
 import arcade
 import random
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT, PLAYER_MOVEMENT_SPEED, PLAYER_START_X, PLAYER_START_Y, CHARACTER_SCALING, TILE_SCALING
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT, PLAYER_MOVEMENT_SPEED, PLAYER_START_X, PLAYER_START_Y, CHARACTER_SCALING, TILE_SCALING, PUNTAJE_VICTORIA
 from models.enemy import EnemigoSeguidor  #importar la clase EnemigoSeguidor
 from models.obstacle import Obstacle
 from models.player import Player
@@ -38,6 +38,8 @@ class GameView(arcade.View):
         self.player = Player()
         self.player.center_x = PLAYER_START_X
         self.player.center_y = PLAYER_START_Y
+        self.ganaste = False
+        self.meta_puntos = PUNTAJE_VICTORIA
 
         # ==========================================================
         # IMPORTACIÓN TMX
@@ -179,17 +181,86 @@ class GameView(arcade.View):
 
         self.score_manager.draw()
 
+        self.gui_camera.use()
+
+        # Dibujamos el nivel en la esquina superior izquierda
+        # (Ajusta 10, 550 según el tamaño de tu ventana para que no tape los puntos)
+        posicion_superior = SCREEN_HEIGHT -130
+
+        arcade.draw_text(
+            f"DIFICULTAD: {self.nivel_interfaz}",
+            20,                         # Posición X
+            posicion_superior,                        # Posición Y (ajustar si es necesario)
+            arcade.color.ORANGE_PEEL,          
+            font_size=25,
+            bold=True
+        )
+        # ==========================================================
+
+        if self.ganaste:
+            self.gui_camera.use()
+            
+            # Fondo oscuro
+            arcade.draw_rect_filled(
+                arcade.XYWH(
+                    SCREEN_WIDTH / 2, 
+                    SCREEN_HEIGHT / 2, 
+                    SCREEN_WIDTH, 
+                    SCREEN_HEIGHT
+                ),
+                (0, 0, 0, 180)
+            )
+
+            # Título principal (Cambiamos start_x/y por x/y)
+            arcade.draw_text(
+                text="¡GANASTE!",
+                x=SCREEN_WIDTH / 2,
+                y=SCREEN_HEIGHT / 2 + 50,
+                color=arcade.color.GOLD,
+                font_size=50,
+                anchor_x="center",
+                bold=True
+            )
+
+            # Subtexto explicativo
+            arcade.draw_text(
+                text="Pasas al siguiente mundo.\nPresiona 'R' para reiniciar",
+                x=SCREEN_WIDTH / 2,
+                y=SCREEN_HEIGHT / 2 - 50,
+                color=arcade.color.WHITE,
+                font_size=20,
+                anchor_x="center",
+                multiline=True,
+                width=SCREEN_WIDTH,
+                align="center"
+            )
+
     def on_update(self, delta_time):
         """ Aquí se mueve todo (gravedad, enemigos, etc.) """
 
+        # <<<<<< GANAR: Si ya ganó, detenemos toda la actualización
+        if self.ganaste:
+            return
+
         # --- LÓGICA DE DIFICULTAD ---
         # Calculamos el multiplicador: aumenta 0.2 (20%) cada 100 puntos
-        nivel_actual = self.score_manager.score // 100
-        dificultad = 1.0 + (nivel_actual * 0.5)
+        self.base_nivel = self.score_manager.score // 100
+
+        # <<<<<< FUCSIA: Esta variable la usaremos para el texto en pantalla
+        # Sumamos 1 para que el jugador vea "Dificultad: 1" al empezar
+        self.nivel_interfaz = self.base_nivel + 1
+
+        dificultad = 1.0 + (self.base_nivel * 0.5)
+
+        # <<<<<< GANAR: Verificar si alcanzó la meta definida en constants
+        # Importante hacerlo después de actualizar el nivel pero antes de mover todo
+        if self.score_manager.score >= PUNTAJE_VICTORIA:
+            self.ganaste = True
+            return
 
         # ** Mensaje en consola para confirmar que el nivel subió **
         if self.score_manager.score > 0 and self.score_manager.score % 100 == 0:
-            print(f"¡DIFICULTAD AUMENTADA! Nivel: {nivel_actual} | Multiplicador: {dificultad}")
+            print(f"¡DIFICULTAD AUMENTADA! Nivel: {self.base_nivel} | Multiplicador: {dificultad}")
 
         # 1. Actualizar físicas (esto mueve al pingüino y aplica gravedad)
         self.physics_engine.update()
@@ -249,7 +320,7 @@ class GameView(arcade.View):
             nueva_roca.center_x = self.player.center_x + 600 # Un poco más lejos para que de tiempo a saltar
             nueva_roca.center_y = 64
             self.lista_obstaculos.append(nueva_roca)
-            
+
             # Las rocas aparecen más seguido a mayor dificultad
             self.tiempo_proximo_obstaculo = 1.2 / dificultad
 
