@@ -241,13 +241,17 @@ class GameView(arcade.View):
         # --- LÓGICA DE OBSTÁCULOS (PIEDRAS) ---
         self.tiempo_proximo_obstaculo -= delta_time
         if self.tiempo_proximo_obstaculo <= 0:
+
+            velocidad_roca = 6 * dificultad
+
             # Multiplicamos la velocidad base (5) por la dificultad
-            nueva_roca = Obstacle(speed=5 * dificultad)
+            nueva_roca = Obstacle(velocidad_roca)
             nueva_roca.center_x = self.player.center_x + 600 # Un poco más lejos para que de tiempo a saltar
             nueva_roca.center_y = 64
             self.lista_obstaculos.append(nueva_roca)
+            
             # Las rocas aparecen más seguido a mayor dificultad
-            self.tiempo_proximo_obstaculo = 1.0 / dificultad
+            self.tiempo_proximo_obstaculo = 1.2 / dificultad
 
         self.lista_obstaculos.update()
 
