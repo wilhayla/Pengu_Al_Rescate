@@ -5,6 +5,8 @@ from models.enemy import EnemigoSeguidor  #importar la clase EnemigoSeguidor
 from models.obstacle import Obstacle
 from models.player import Player
 from pathlib import Path
+from views.game_score import Score_Manager
+from views.game_over import GameOverView
 
 class GameView(arcade.View):
     def __init__(self):
@@ -23,11 +25,14 @@ class GameView(arcade.View):
 
         self.physics_engine = None
 
-        self.score = 0
-
     def setup(self):
         """ Configuración inicial del nivel usando mapa Tiled (.tmx) """
-        
+
+        # 1. LÓGICA DE PERSISTENCIA
+        # Esto evita que el puntaje y las vidas vuelvan a cero al morir
+        if not hasattr(self, "score_manager"):
+            self.score_manager = Score_Manager(self.window)
+
         # 1. Inicialización del Jugador
         # Nota: Asegúrate de que la clase Player herede de arcade.Sprite correctamente
         self.player = Player()
@@ -134,8 +139,10 @@ class GameView(arcade.View):
         self.lista_obstaculos = arcade.SpriteList()
         self.tiempo_proximo_obstaculo = 0.5
 
-        # 4. Cámara
+        # 4. Cámara para el mundo
         self.camera = arcade.camera.Camera2D()
+        # 5. Camara para la interfaz (queda quieta en la pantalla)
+        self.gui_camera = arcade.camera.Camera2D()
 
     def on_show_view(self):
         """ Se ejecuta al empezar el juego """
@@ -170,9 +177,20 @@ class GameView(arcade.View):
             anchor_x="center"
         )
 
+        self.score_manager.draw()
+
     def on_update(self, delta_time):
         """ Aquí se mueve todo (gravedad, enemigos, etc.) """
-        
+
+        # --- LÓGICA DE DIFICULTAD ---
+        # Calculamos el multiplicador: aumenta 0.2 (20%) cada 100 puntos
+        nivel_actual = self.score_manager.score // 100
+        dificultad = 1.0 + (nivel_actual * 0.5)
+
+        # ** Mensaje en consola para confirmar que el nivel subió **
+        if self.score_manager.score > 0 and self.score_manager.score % 100 == 0:
+            print(f"¡DIFICULTAD AUMENTADA! Nivel: {nivel_actual} | Multiplicador: {dificultad}")
+
         # 1. Actualizar físicas (esto mueve al pingüino y aplica gravedad)
         self.physics_engine.update()
         # 2. SEGUNDO: Chequeamos si en esa nueva posición el pingüino está tocando algo
@@ -185,22 +203,27 @@ class GameView(arcade.View):
         # 3. TERCERO: Procesamos los resultados
         for item in items_tocados:
             item.remove_from_sprite_lists()
-            self.score += 10
+            self.score_manager.add_score(10)
             # Tip: Puedes imprimirlo para estar seguro de que funciona
-            print(f"¡Pescado atrapado! Puntos: {self.score}")
+            print(f"¡Basura atrapada! Puntos: {self.score_manager.score}")
 
         # --- LÓGICA DE ENEMIGOS ---
         self.tiempo_proximo_enemigo -= delta_time
+
+        velocidad_malo = 4 * dificultad
+
         if self.tiempo_proximo_enemigo <= 0:
             nuevo_malo = EnemigoSeguidor(
                 self.player.center_x + 600, 
                 random.randint(200, 500),   
                 self.player, 
-                velocidad=3
+                velocidad=velocidad_malo
             )
             nuevo_malo.tiempo_de_vida = 5.0
             self.lista_enemigos.append(nuevo_malo)
-            self.tiempo_proximo_enemigo = 7
+
+            # Los enemigos aparecen más seguido a mayor dificultad
+            self.tiempo_proximo_enemigo = 7 / dificultad
         
         if self.lista_enemigos:
             self.lista_enemigos.update()
@@ -218,11 +241,13 @@ class GameView(arcade.View):
         # --- LÓGICA DE OBSTÁCULOS (PIEDRAS) ---
         self.tiempo_proximo_obstaculo -= delta_time
         if self.tiempo_proximo_obstaculo <= 0:
-            nueva_roca = Obstacle(speed=5)
+            # Multiplicamos la velocidad base (5) por la dificultad
+            nueva_roca = Obstacle(speed=5 * dificultad)
             nueva_roca.center_x = self.player.center_x + 600 # Un poco más lejos para que de tiempo a saltar
             nueva_roca.center_y = 64
             self.lista_obstaculos.append(nueva_roca)
-            self.tiempo_proximo_obstaculo = 1.0
+            # Las rocas aparecen más seguido a mayor dificultad
+            self.tiempo_proximo_obstaculo = 1.0 / dificultad
 
         self.lista_obstaculos.update()
 
@@ -278,10 +303,26 @@ class GameView(arcade.View):
     def perder_vida(self):
         """ Esta función se ejecuta cuando chocas """
         print("¡El pingüino ha sido golpeado!")
+
+        # 1. Restar la vida en el Score_Manager
+        self.score_manager.vidas -= 1
+
         self.player.die()  # Esto usa el método die() que creamos en player.py
         
-        # Opcional: Si quieres que el enemigo también vuelva a su sitio
-        self.setup() # Esto reiniciaría todo el nivel
+        # 3. Lógica de decisión: ¿Reiniciar o Game Over?
+        if self.score_manager.vidas > 0:
+            # Si aún tiene vidas, reiniciamos el nivel para continuar
+            print(f"Vidas restantes: {self.score_manager.vidas}")
+            self.setup() 
+        else:
+            # Si las vidas llegan a 0
+            print("GAME OVER - Sin vidas restantes")
+            
+            # 1. Creamos la vista de Game Over y le pasamos el score actual
+            view = GameOverView(self.score_manager.score)
+
+            # 2. Cambiamos la vista actual por la de Game Over
+            self.window.show_view(view)
 
     def on_key_press(self, key, modifiers):
         """ Control del pingüino y navegación """
