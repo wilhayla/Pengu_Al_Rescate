@@ -40,13 +40,10 @@ class MenuView(arcade.View):
     def on_key_press(self, key, modifiers):
         """ Si presiona Enter, pasamos a la vista del juego """
         if key == arcade.key.ENTER:
+            
             from views.game_view import GameView
 
             game_view = GameView()
-
+            game_view.setup() 
             self.window.show_view(game_view)
-
-            # Aquí es donde mañana llamaremos a la GameView
-            print("Cambiando a la vista del juego...")
-            # game_view = GameView()
-            # self.window.show_view(game_view)
+            print("¡Setup ejecutado y juego iniciado!")
