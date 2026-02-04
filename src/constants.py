@@ -1,8 +1,8 @@
 # Colores, tamaños de pantalla, gravedades,  etc
 
 # --- Configuración de Pantalla ---
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 1920
+SCREEN_HEIGHT = 1080
 SCREEN_TITLE = "Pengu al Rescate: Misión Ambiental"
 
 # --- Físicas y Movimiento ---
@@ -32,10 +32,10 @@ CHARACTER_SCALING = 0.5  # Esto reduce la imagen original a la mitad
 
 # Escala para los obstáculos (Rocas/Enemigos)
 # A veces quieres que las rocas sean un poco más pequeñas que el héroe
-OBSTACLE_SCALING = 0.4   
+OBSTACLE_SCALING = 1   
 
 # Escala para el mapa o suelo
-TILE_SCALING = 0.5
+TILE_SCALING = 1
 
 PLAYER_MOVEMENT_SPEED = 5
 
