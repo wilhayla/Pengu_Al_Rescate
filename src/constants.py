@@ -28,7 +28,7 @@ WORLD_CITY = "City"
 WORLD_OCEAN = "Ocean"
 
 # Escala general para los personajes (Robot/Pingüino)
-CHARACTER_SCALING = 0.5  # Esto reduce la imagen original a la mitad
+CHARACTER_SCALING = 1  # Esto reduce la imagen original a la mitad
 
 # Escala para los obstáculos (Rocas/Enemigos)
 # A veces quieres que las rocas sean un poco más pequeñas que el héroe

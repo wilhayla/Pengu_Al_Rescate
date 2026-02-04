@@ -1,17 +1,28 @@
 import arcade
+import os
+from pathlib import Path
 import random
 from constants import *
 
 class Obstacle(arcade.Sprite):
     def __init__(self, speed):
-        # Por ahora usamos un recurso predeterminado de arcade (una roca)
-        # super().__init__(":resources:images/items/rock.png", CHARACTER_SCALING)
-        super().__init__()
-        self.texture = arcade.make_soft_circle_texture(50, arcade.color.RED)
+        # 1. Ruta segura
+        file_path = Path(__file__).resolve()
+        project_root = file_path.parent.parent.parent
+        
+        # 2. NOMBRE DEL ARCHIVO (¡VERIFICA ESTO!)
+        # Si en tu carpeta el archivo se llama 'lata.png', cámbialo aquí.
+        # Si se llama 'lata_basura.png', cámbialo aquí.
+        nombre_archivo = "basurero.png" 
+        
+        image_path = str(project_root / "assets" / "images" / "obstacles" / nombre_archivo)
+        
+        # 3. Inicializar
+        super().__init__(image_path, CHARACTER_SCALING)
         
         # Posición inicial: justo fuera de la pantalla a la derecha
         self.center_x = SCREEN_WIDTH + 100
-        self.center_y = 110 # Un poco arriba del suelo
+        self.center_y = 130 # Un poco arriba del suelo
         
         # self.speed = speed
         # En lugar de una variable 'speed' custom, usamos la de Arcade

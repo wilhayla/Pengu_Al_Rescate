@@ -1,10 +1,24 @@
 import arcade
+from pathlib import Path
 
 # Importamos las vistas necesarias y constantes
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 
 class MenuView(arcade.View):
     """ Pantalla principal que aparece al iniciar el juego """
+
+    def __init__(self):
+        super().__init__()
+        # --- Lógica para cargar el fondo ---
+        file_path = Path(__file__).resolve()
+        project_root = file_path.parent.parent.parent
+        
+        # Ajusta el nombre si tu archivo no es "background.png"
+        nombre_archivo = "fondo_inicio.jpg"
+        self.background_path = str(project_root / "assets" / "images" / "backgrounds" / nombre_archivo)
+        
+        # Cargamos la textura una sola vez para ahorrar memoria
+        self.background_texture = arcade.load_texture(self.background_path)
 
     def on_show_view(self):
         """ Se ejecuta cuando cambiamos a esta vista """

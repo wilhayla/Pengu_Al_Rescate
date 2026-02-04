@@ -25,6 +25,11 @@ class GameView(arcade.View):
 
         self.physics_engine = None
 
+        self.collect_item_sound = arcade.load_sound(":resources:sounds/coin1.wav")
+        self.jump_sound = arcade.load_sound(":resources:sounds/jump1.wav")
+        self.golpe = arcade.load_sound(":resources:sounds/hurt1.wav")
+        self.game_over = arcade.load_sound(":resources:sounds/gameover1.wav")
+
     def setup(self):
         """ Configuración inicial del nivel usando mapa Tiled (.tmx) """
 
@@ -40,6 +45,11 @@ class GameView(arcade.View):
         self.player.center_y = PLAYER_START_Y
         self.ganaste = False
         self.meta_puntos = PUNTAJE_VICTORIA
+
+        file_path = Path(__file__).resolve()
+        project_root = file_path.parent.parent.parent
+        # Ruta a tu imagen personalizada
+        coin_path = str(project_root / "assets" / "images" / "obstacles" / "banana_basura.png")
 
         # ==========================================================
         # IMPORTACIÓN TMX
@@ -83,7 +93,7 @@ class GameView(arcade.View):
         ALTO_MAXIMO = 500
 
         for i in range(NUMERO_DE_ITEMS):
-            item = arcade.Sprite(":resources:images/items/gold_1.png", 0.5)
+            item = arcade.Sprite(coin_path, 0.5)
             
             # Generar coordenadas aleatorias
             item.center_x = random.randrange(0, ANCHO_MAPA)
@@ -94,7 +104,7 @@ class GameView(arcade.View):
         # --------------------------------------------------
 
         for i in range(NUMERO_DE_ITEMS):
-            item = arcade.Sprite(":resources:images/items/gold_1.png", 0.5)
+            item = arcade.Sprite(coin_path, 0.5)
             
             colocacion_exitosa = False
             while not colocacion_exitosa:
@@ -167,17 +177,6 @@ class GameView(arcade.View):
         # Solo dibujamos lo que NO esté ya dentro de self.scene
         self.lista_obstaculos.draw() 
         self.lista_enemigos.draw()
-
-        # 4. TEXTO DE DEBUG
-        # Usamos el player directamente ya que está inicializado en setup
-        arcade.draw_text(
-            "ZONA DE JUEGO", 
-            self.player.center_x, 
-            self.player.center_y + 100,
-            arcade.color.BLACK, 
-            font_size=20, 
-            anchor_x="center"
-        )
 
         self.score_manager.draw()
 
@@ -275,6 +274,7 @@ class GameView(arcade.View):
         for item in items_tocados:
             item.remove_from_sprite_lists()
             self.score_manager.add_score(10)
+            arcade.play_sound(self.collect_item_sound)
             # Tip: Puedes imprimirlo para estar seguro de que funciona
             print(f"¡Basura atrapada! Puntos: {self.score_manager.score}")
 
@@ -335,9 +335,11 @@ class GameView(arcade.View):
         if self.player and self.lista_enemigos:
             if len(arcade.check_for_collision_with_list(self.player, self.lista_enemigos)) > 0:
                 self.perder_vida()
+                arcade.play_sound(self.golpe)
 
         if arcade.check_for_collision_with_list(self.player, self.lista_obstaculos):
             self.perder_vida()
+            arcade.play_sound(self.golpe)
 
         # --- ANIMACIÓN ---
         self.player.update_animation(delta_time)
@@ -390,6 +392,7 @@ class GameView(arcade.View):
             print(f"Vidas restantes: {self.score_manager.vidas}")
             self.setup() 
         else:
+            arcade.play_sound(self.game_over)
             # Si las vidas llegan a 0
             print("GAME OVER - Sin vidas restantes")
             
@@ -407,6 +410,7 @@ class GameView(arcade.View):
         if key == arcade.key.SPACE or key == arcade.key.UP:
             if self.physics_engine.can_jump():
                 self.player.jump()
+                arcade.play_sound(self.jump_sound)
 
         # 2. MOVIMIENTO LATERAL: (Opcional, según tu diseño)
         elif key == arcade.key.LEFT or key == arcade.key.A:
