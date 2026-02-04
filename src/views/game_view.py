@@ -175,6 +175,19 @@ class GameView(arcade.View):
         
         # 1. Actualizar físicas (esto mueve al pingüino y aplica gravedad)
         self.physics_engine.update()
+        # 2. SEGUNDO: Chequeamos si en esa nueva posición el pingüino está tocando algo
+        # Obtenemos los items de la escena
+        lista_recolectables = self.scene.get_sprite_list("Coleccionables")
+        
+        # Buscamos colisiones
+        items_tocados = arcade.check_for_collision_with_list(self.player, lista_recolectables)
+
+        # 3. TERCERO: Procesamos los resultados
+        for item in items_tocados:
+            item.remove_from_sprite_lists()
+            self.score += 10
+            # Tip: Puedes imprimirlo para estar seguro de que funciona
+            print(f"¡Pescado atrapado! Puntos: {self.score}")
 
         # --- LÓGICA DE ENEMIGOS ---
         self.tiempo_proximo_enemigo -= delta_time
